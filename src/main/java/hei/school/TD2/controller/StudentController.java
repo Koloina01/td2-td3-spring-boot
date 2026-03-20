@@ -23,7 +23,7 @@ public class StudentController {
         if (name == null || name.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("Paramètre 'name' manquant");
+                    .body("missing parameter: name");
         }
 
         return ResponseEntity
@@ -32,20 +32,29 @@ public class StudentController {
     }
 
     @PostMapping("/students")
-    public String addStudents(@RequestBody List<Student> students) {
+    public ResponseEntity<?> addStudents(@RequestBody List<Student> students) {
 
-        List<Student> allStudents = service.addStudents(students);
+        try {
+            List<Student> allStudents = service.addStudents(students);
 
-        StringBuilder result = new StringBuilder();
+            StringBuilder result = new StringBuilder();
 
-        for (Student s : allStudents) {
-            result.append(s.getFirstName())
-                    .append(" ")
-                    .append(s.getLastName())
-                    .append("\n");
+            for (Student s : allStudents) {
+                result.append(s.getFirstName())
+                        .append(" ")
+                        .append(s.getLastName())
+                        .append("\n");
+            }
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(result.toString());
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Server error");
         }
-
-        return result.toString();
     }
 
     @GetMapping("/students")

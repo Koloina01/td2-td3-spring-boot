@@ -3,6 +3,8 @@ package hei.school.TD2.controller;
 import hei.school.TD2.entity.Student;
 import hei.school.TD2.service.StudentService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -16,8 +18,17 @@ public class StudentController {
     }
 
     @GetMapping("/welcome")
-    public String welcome(@RequestParam String name) {
-        return "Welcome " + name;
+    public ResponseEntity<String> welcome(@RequestParam(required = false) String name) {
+
+        if (name == null || name.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Paramètre 'name' manquant");
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Welcome " + name);
     }
 
     @PostMapping("/students")

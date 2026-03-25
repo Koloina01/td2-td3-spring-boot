@@ -1,6 +1,7 @@
 package hei.school.TD2.controller;
 
 import hei.school.TD2.entity.Student;
+import hei.school.TD2.exception.BadRequestException;
 import hei.school.TD2.service.StudentService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -37,18 +38,14 @@ public class StudentController {
         try {
             List<Student> allStudents = service.addStudents(students);
 
-            StringBuilder result = new StringBuilder();
-
-            for (Student s : allStudents) {
-                result.append(s.getFirstName())
-                        .append(" ")
-                        .append(s.getLastName())
-                        .append("\n");
-            }
-
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(result.toString());
+                    .body(allStudents);
+
+        } catch (BadRequestException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
 
         } catch (Exception e) {
             return ResponseEntity
